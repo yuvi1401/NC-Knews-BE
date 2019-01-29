@@ -10,8 +10,8 @@ exports.up = function (connection, Promise) {
       .references('article_id')
       .inTable('articles');
     commentsTable.integer('votes').defaultTo('0');
-    commentsTable.datetime('created_at', 13).defaultTo(connection.fn.now(13));
-    commentsTable.string('body');
+    commentsTable.timestamp('created_at').defaultTo(connection.fn.now(6));
+    commentsTable.text('body').notNullable();
   });
 };
 
