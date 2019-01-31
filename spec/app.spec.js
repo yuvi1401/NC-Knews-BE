@@ -18,12 +18,11 @@ describe('/api', () => {
       .get('/api/topics')
       .expect(200)
       .then(({ body }) => {
-        console.log(body);
+        // console.log(body);
         expect(body.topics).to.be.an('array');
         expect(body.topics[0]).to.contains.keys('slug', 'description');
       }));
-  });
-  describe('/topics', () => {
+
     it('POST status: 201 responds topic added to topics table', () => {
       const newTopic = {
         description: 'Writing, reading really fun',
@@ -34,9 +33,30 @@ describe('/api', () => {
         .send(newTopic)
         .expect(201)
         .then(({ body }) => {
-          console.log(body);
+          // console.log(body);
           expect(body.topic.slug).to.equal(newTopic.slug);
           expect(body.topic.description).to.equal(newTopic.description);
+        });
+    });
+  });
+  describe('/:topic/articles', () => {
+    it('GET status 200 responds for array of articles for given topic', () => {
+      request
+        .get('/api/topics/mitch/articles')
+        .expect(200)
+        .then(({ body }) => {
+          console.log(body);
+          expect(body.articles).to.be.an('array');
+          expect(body.articles).to.have.length(10);
+          expect(body.articles[0]).to.have.keys(
+            'article_id',
+            'title',
+            'author',
+            'votes',
+            'comment_count',
+            'created_at',
+            'topic',
+          );
         });
     });
   });
