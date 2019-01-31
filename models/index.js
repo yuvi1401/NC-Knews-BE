@@ -6,7 +6,7 @@ exports.addTopic = newTopic => connection('topics')
   .insert(newTopic)
   .returning('*');
 
-exports.fetchArticlesByTopic = (topic, limit = 10, sort_by = 'created_at', p = 1, order = 'desc') => connection('articles')
+exports.fetchArticlesByTopic = (topic, limit, sort_by, p, order) => connection('articles')
   .select(
     'articles.article_id',
     'articles.username as author',
@@ -22,3 +22,7 @@ exports.fetchArticlesByTopic = (topic, limit = 10, sort_by = 'created_at', p = 1
   .limit(limit)
   .orderBy(sort_by, order)
   .offset((p - 1) * limit);
+
+exports.addArticleByTopic = newArticle => connection('articles')
+  .insert(newArticle)
+  .returning('*');

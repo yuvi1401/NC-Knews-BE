@@ -13,6 +13,14 @@ describe('/api', () => {
 
   after(() => connection.destroy());
 
+  it('GET status error for wrong startpoint with errormessage', () => request
+    .get('/wrongstartpoint')
+    .expect(404)
+    .then(({ body }) => {
+      console.log(body);
+      expect(body).to.haveOwnProperty('message');
+    }));
+
   describe('/topics', () => {
     it('GET status: 200 responds with an array of topics', () => request
       .get('/api/topics')
@@ -38,6 +46,14 @@ describe('/api', () => {
           expect(body.topic.description).to.equal(newTopic.description);
         });
     });
+    it('GET status:400 responds with error message for request with bad id', () => request
+      .post('/api/topics')
+      .send({ username: 'bbc' })
+      .expect(400)
+      .then(({ body }) => {
+        // console.log(body);
+        expect(body).to.haveOwnProperty('message');
+      }));
   });
   describe('/:topic/articles', () => {
     it('GET status 200 responds for array of articles for given topic', () => {
@@ -45,7 +61,7 @@ describe('/api', () => {
         .get('/api/topics/mitch/articles')
         .expect(200)
         .then(({ body }) => {
-          console.log(body);
+          // console.log(body);
           expect(body.articles).to.be.an('array');
           expect(body.articles).to.have.length(10);
           expect(body.articles[0]).to.have.keys(
@@ -59,5 +75,85 @@ describe('/api', () => {
           );
         });
     });
+    it('GET status 200 for queries limit, sort_by, p, order', () => {
+      request
+        .get('/api/topics/mitch/articles?limit=10&p=2')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).to.have.length(1);
+        });
+    });
+    it('GET status 200 for queries limit, sort_by, p, order', () => {
+      request
+        .get('/api/topics/mitch/articles?limit=11&p=1')
+        .expect(200)
+        .then(({ body }) => {
+          // console.log(body);
+          expect(body.articles).to.have.length(11);
+        });
+    });
+    it('GET status 200 for querie order', () => {
+      request
+        .get('/api/topics/mitch/articles?order=asc')
+        .expect(200)
+        .then(({ body }) => {
+          // console.log(body);
+          expect(body.articles[0].title).to.equal('Moustache');
+        });
+    });
+    it.only('GET status 200 for querie order', () => {
+      request
+        .get('/api/topics/mitch/articles?sort_by=title')
+        .expect(200)
+        .then(({ body }) => {
+          // console.log(body);
+          expect(body.articles[0].title).to.equal('Z');
+        });
+    });
+    it('GET status 404 for wrong topic', () => {
+      request
+        .get('/api/topics/barbara/articles')
+        .expect(404)
+        .then(({ body }) => {
+          // console.log(body);
+          expect(body).to.haveOwnProperty('message');
+        });
+    });
+
+    it('POST status: 201 responds for posted article for given topic', () => {
+      const newArticle = {
+        username: 'rogersop',
+        title: 'spider web',
+        body: 'under the dark world of spider web',
+      };
+      return request
+        .post('/api/topics/mitch/articles')
+        .send(newArticle)
+        .expect(201)
+        .then(({ body }) => {
+          // console.log(body);
+          expect(body.article).to.have.keys(
+            'username',
+            'title',
+            'body',
+            'topic',
+            'votes',
+            'article_id',
+            'created_at',
+          );
+          expect(body.article.username).to.equal(newArticle.username);
+          expect(body.article.title).to.equal(newArticle.title);
+          expect(body.article.body).to.equal(newArticle.body);
+          expect(body.article.topic).to.equal('mitch');
+        });
+    });
+    it('GET status:400 responds with error message for request with bad id', () => request
+      .post('/api/topics/mitch/articles')
+      .send({ slug: 'bbc' })
+      .expect(400)
+      .then(({ body }) => {
+        // console.log(body);
+        expect(body).to.haveOwnProperty('message');
+      }));
   });
 });
