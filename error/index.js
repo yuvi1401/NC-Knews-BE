@@ -8,7 +8,7 @@ exports.handle400 = (err, req, res, next) => {
 };
 
 exports.handle404 = (err, req, res, next) => {
-  console.log(err);
+  // console.log(err);
   if (err.status === 404) res.status(404).send({ message: '404: Route does not exist' });
   else next(err);
 };

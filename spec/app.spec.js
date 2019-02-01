@@ -221,7 +221,7 @@ describe('/api', () => {
           .get('/api/articles/1')
           .expect(200)
           .then(({ body }) => {
-            console.log(body);
+            // console.log(body);
             expect(body.article).to.have.keys(
               'article_id',
               'title',
@@ -246,11 +246,42 @@ describe('/api', () => {
             expect(body).to.haveOwnProperty('message');
           });
       });
-      // it('DELETE article by article id and send status 204', () => {
-      //   request.delete('api/articles/1')
-      //     .expect(204)
-      //     .then(() => { request.get('api/articles/1').expect(404); });
-      // });
+      it('DELETE article by article id and send status 204', () => request.delete('/api/articles/1')
+        .expect(204));
+
+      it('PATCH should update the correct articles votes for given id', () => request
+        .patch('/api/articles/1')
+        .expect(200)
+        .send({ inc_votes: 1 })
+        .then(({ body }) => {
+          // console.log(body);
+          expect(body.votes).to.equal(101);
+        }));
+
+      it('PATCH should increament articles by given votes for article id', () => request
+        .patch('/api/articles/4')
+        .expect(200)
+        .send({ inc_votes: 4 })
+        .then(({ body }) => {
+          // console.log(body);
+          expect(body.votes).to.equal(4);
+        }));
+      it('PATCH should decreament articles by given votes for article id', () => request
+        .patch('/api/articles/4')
+        .expect(200)
+        .send({ inc_votes: -1 })
+        .then(({ body }) => {
+          // console.log(body);
+          expect(body.votes).to.equal(-1);
+        }));
+      it('PATCH should decreament articles by given votes for article id', () => request
+        .patch('/api/articles/1')
+        .expect(200)
+        .send({ inc_votes: -1 })
+        .then(({ body }) => {
+          // console.log(body);
+          expect(body.votes).to.equal(99);
+        }));
     });
   });
 });

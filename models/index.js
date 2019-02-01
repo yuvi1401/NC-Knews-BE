@@ -60,6 +60,19 @@ exports.fetchArticleById = id => connection('articles')
   .groupBy('articles.article_id')
   .count({ comment_count: 'comments.comment_id' });
 
-exports.deleteArticle = id => connection('articles')
-  .where(id)
-  .delete();
+// exports.deleteArticle = id => connection('articles')
+//   .where(id)
+//   .delete();
+
+// exports.deleteArticle = (str, id) => connection('articles')
+//   .where(str, id)
+//   .delete();
+
+exports.deleteArticle = article_id => connection('articles')
+  .where({ article_id })
+  .del();
+
+exports.patchVotes = (article_id, inc_votes) => connection('articles')
+  .where('articles.article_id', '=', article_id)
+  .increment('votes', inc_votes)
+  .returning('*');

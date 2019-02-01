@@ -8,7 +8,8 @@ exports.up = function (connection, Promise) {
     commentsTable
       .integer('article_id')
       .references('article_id')
-      .inTable('articles');
+      .inTable('articles')
+      .onDelete('CASCADE');
     commentsTable.integer('votes').defaultTo('0');
     commentsTable.timestamp('created_at').defaultTo(connection.fn.now(6));
     commentsTable.text('body').notNullable();
