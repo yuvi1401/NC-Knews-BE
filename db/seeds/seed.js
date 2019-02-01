@@ -38,13 +38,13 @@ exports.seed = function (knex, Promise) {
             ...restOfArticle,
           }),
         );
+        // console.log(formatDataOfArticles, '<--- formatted articles');
         return knex('articles')
           .insert(formatDataOfArticles)
           .returning('*');
       })
       .then((articletable) => {
         const articleRef = createRefArticlesData(articletable, 'title', 'article_id');
-        // console.log(articleRef);
         const formatCommentsData = commentData.map(
           ({
             created_at, created_by, belongs_to, ...restOfArticle

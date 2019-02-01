@@ -1,4 +1,4 @@
-const { fetchArticles, fetchArticleById } = require('../models/index');
+const { fetchArticles, fetchArticleById, deleteArticle } = require('../models/index');
 
 exports.getArticles = (req, res, next) => {
   const {
@@ -18,6 +18,16 @@ exports.getArticleById = (req, res, next) => {
     .then(([article]) => {
       if (!article) next({ status: 404 });
       else res.status(200).send({ article });
+    })
+    .catch(next);
+};
+
+exports.deleteArticleById = (req, res, next) => {
+  const { article_id } = req.params;
+  return deleteArticle('article_id', article_id)
+    .then((deletecount) => {
+      if (!deletecount) next({ status: 404 });
+      else res.status(204).send({ message: 'deleted successfuly' });
     })
     .catch(next);
 };

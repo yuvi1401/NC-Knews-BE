@@ -158,25 +158,23 @@ describe('/api', () => {
   });
 
   describe('/api/articles', () => {
-    it('GET status 200 responds for array of articles', () => {
-      request
-        .get('/api/articles')
-        .expect(200)
-        .then(({ body }) => {
-          // console.log(body);
-          expect(body.articles).to.be.an('array');
-          expect(body.articles).to.have.length(10);
-          expect(body.articles[0]).to.have.keys(
-            'article_id',
-            'title',
-            'author',
-            'votes',
-            'comment_count',
-            'created_at',
-            'topic',
-          );
-        });
-    });
+    it('GET status 200 responds for array of articles', () => request
+      .get('/api/articles')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).to.be.an('array');
+        expect(body.articles).to.have.length(10);
+        expect(body.articles[0]).to.have.keys(
+          'article_id',
+          'title',
+          'author',
+          'votes',
+          'comment_count',
+          'created_at',
+          'topic',
+          'body',
+        );
+      }));
     it('GET status 200 for response limit on page', () => {
       request
         .get('/api/articles')
@@ -223,7 +221,7 @@ describe('/api', () => {
           .get('/api/articles/1')
           .expect(200)
           .then(({ body }) => {
-            // console.log(body);
+            console.log(body);
             expect(body.article).to.have.keys(
               'article_id',
               'title',
@@ -248,6 +246,11 @@ describe('/api', () => {
             expect(body).to.haveOwnProperty('message');
           });
       });
+      // it('DELETE article by article id and send status 204', () => {
+      //   request.delete('api/articles/1')
+      //     .expect(204)
+      //     .then(() => { request.get('api/articles/1').expect(404); });
+      // });
     });
   });
 });

@@ -35,14 +35,15 @@ exports.fetchArticles = (limit, sort_by, p, order) => connection('articles')
     'articles.votes as votes',
     'articles.created_at',
     'articles.topic',
+    'articles.body',
   )
-  .count({ comment_count: 'comments.comment_id' })
   .leftJoin('comments', 'comments.article_id', '=', 'articles.article_id')
   .groupBy('articles.article_id')
-  .from('articles')
+  .count({ comment_count: 'comments.comment_id' })
   .limit(limit)
   .orderBy(sort_by, order)
-  .offset((p - 1) * limit);
+  .offset((p - 1) * limit)
+  .returning('*');
 
 exports.fetchArticleById = id => connection('articles')
   .select(
@@ -58,3 +59,7 @@ exports.fetchArticleById = id => connection('articles')
   .leftJoin('comments', 'comments.article_id', '=', 'articles.article_id')
   .groupBy('articles.article_id')
   .count({ comment_count: 'comments.comment_id' });
+
+exports.deleteArticle = id => connection('articles')
+  .where(id)
+  .delete();

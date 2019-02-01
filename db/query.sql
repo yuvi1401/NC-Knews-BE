@@ -21,6 +21,7 @@
 --GROUP BY articles.article_id ORDER BY articles.created_at DESC LIMIT 10
 
 SELECT articles.article_id, articles.username, articles.title, articles.votes, 
-articles.created_at, articles.topic, COUNT (comments.comment_id)
+articles.created_at, articles.topic  COUNT (comments.comment_id)
 FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id
 GROUP BY articles.article_id ORDER BY articles.created_at DESC LIMIT 10
+-- SELECT * FROM articles
