@@ -17,7 +17,7 @@ describe('/api', () => {
     .get('/wrongstartpoint')
     .expect(404)
     .then(({ body }) => {
-      console.log(body);
+      // console.log(body);
       expect(body).to.haveOwnProperty('message');
     }));
 
@@ -75,7 +75,7 @@ describe('/api', () => {
           );
         });
     });
-    it('GET status 200 for queries limit, sort_by, p, order', () => {
+    it('GET status 200 for queries for limit and pagination', () => {
       request
         .get('/api/topics/mitch/articles?limit=10&p=2')
         .expect(200)
@@ -83,7 +83,7 @@ describe('/api', () => {
           expect(body.articles).to.have.length(1);
         });
     });
-    it('GET status 200 for queries limit, sort_by, p, order', () => {
+    it('GET status 200 for queries for pagination', () => {
       request
         .get('/api/topics/mitch/articles?limit=11&p=1')
         .expect(200)
@@ -101,7 +101,7 @@ describe('/api', () => {
           expect(body.articles[0].title).to.equal('Moustache');
         });
     });
-    it.only('GET status 200 for querie order', () => {
+    it('GET status 200 for querie order sort_by', () => {
       request
         .get('/api/topics/mitch/articles?sort_by=title')
         .expect(200)
@@ -155,5 +155,99 @@ describe('/api', () => {
         // console.log(body);
         expect(body).to.haveOwnProperty('message');
       }));
+  });
+
+  describe('/api/articles', () => {
+    it('GET status 200 responds for array of articles', () => {
+      request
+        .get('/api/articles')
+        .expect(200)
+        .then(({ body }) => {
+          // console.log(body);
+          expect(body.articles).to.be.an('array');
+          expect(body.articles).to.have.length(10);
+          expect(body.articles[0]).to.have.keys(
+            'article_id',
+            'title',
+            'author',
+            'votes',
+            'comment_count',
+            'created_at',
+            'topic',
+          );
+        });
+    });
+    it('GET status 200 for response limit on page', () => {
+      request
+        .get('/api/articles')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).to.have.length(10);
+        });
+    });
+    it('GET status 200 for response limit change on page', () => {
+      request
+        .get('/api/articles?limit=5')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).to.have.length(5);
+        });
+    });
+    it('GET status 200 for response on page 2 for default limit', () => {
+      request
+        .get('/api/articles?p=2')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).to.have.length(2);
+        });
+    });
+    it('GET status 200 for response on page 2 for default limit', () => {
+      request
+        .get('/api/articles?p=2')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).to.have.length(2);
+        });
+    });
+    it('GET status 200 for response for given order', () => {
+      request
+        .get('/api/articles?sort_by=article_id&order=asc')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles[0].article_id).to.equal(1);
+        });
+    });
+    describe('/:article_id', () => {
+      it('GET status 200 responds for given article_id', () => {
+        request
+          .get('/api/articles/1')
+          .expect(200)
+          .then(({ body }) => {
+            // console.log(body);
+            expect(body.article).to.have.keys(
+              'article_id',
+              'title',
+              'author',
+              'votes',
+              'body',
+              'comment_count',
+              'created_at',
+              'topic',
+            );
+            expect(body.article.article_id).to.equal(1);
+            expect(body.article.author).to.equal('butter_bridge');
+            expect(body.article.body).to.equal('I find this existence challenging');
+          });
+      });
+      it('GET status 404 error response for incorrect id request', () => {
+        request
+          .get('/api/articles/678')
+          .expect(404)
+          .then(({ body }) => {
+            // console.log(body);
+            expect(body).to.haveOwnProperty('message');
+          });
+      });
+    });
   });
 });
