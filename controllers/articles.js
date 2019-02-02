@@ -1,5 +1,9 @@
 const {
-  fetchArticles, fetchArticleById, deleteArticle, patchVotes,
+  fetchArticles,
+  fetchArticleById,
+  deleteArticle,
+  patchVotes,
+  fetchCommentsByArticleId,
 } = require('../models/index');
 
 exports.getArticles = (req, res, next) => {
@@ -51,6 +55,23 @@ exports.patchVotesByArticleId = (req, res, next) => {
       // console.log(article);
       if (!article) next({ status: 404 });
       else res.status(200).send(article);
+    })
+    .catch(next);
+};
+
+exports.getCommentsByArticleId = (req, res, next) => {
+  const {
+    limit = 10, sort_by = 'created_at', p = 1, order = 'desc',
+  } = req.query;
+
+  const sortOrder = ['comment_id', 'votes', 'author', 'created_at', 'body'];
+  const sort_by_selection = sortOrder.includes(sort_by) ? sort_by : 'created_at';
+  const orderSelection = order === 'asc' ? 'asc' : 'desc';
+
+  return fetchCommentsByArticleId(req.params, limit, sort_by_selection, p, orderSelection)
+    .then((comments) => {
+      if (!comments) next({ status: 404 });
+      else res.status(200).send({ comments });
     })
     .catch(next);
 };

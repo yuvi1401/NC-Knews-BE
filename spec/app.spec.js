@@ -283,5 +283,62 @@ describe('/api', () => {
           expect(body.votes).to.equal(99);
         }));
     });
+    describe('/:article_id/comments', () => {
+      it('GET status 200 responce for array of comments for article_id', () => request
+        .get('/api/articles/1/comments')
+        .expect(200)
+        .then(({ body }) => {
+          // console.log(body);
+          expect(body.comments).to.be.an('array');
+          expect(body.comments[0]).to.have.keys(
+            'comment_id',
+            'votes',
+            'created_at',
+            'author',
+            'body',
+          );
+        }));
+      it('GET status:200 responce for default limit of 10', () => request
+        .get('/api/articles/1/comments')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comments).to.have.length(10);
+        }));
+      it('GET status:200 responce for default created_at', () => request
+        .get('/api/articles/1/comments')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comments[0].created_at > body.comments[1].created_at).to.equal(true);
+          expect(body.comments[1].created_at > body.comments[2].created_at).to.equal(true);
+        }));
+      it('GET status:200 responce for order asc DEFAULT created_at', () => request
+        .get('/api/articles/1/comments?order=asc')
+        .expect(200)
+        .then(({ body }) => {
+          // console.log(body);
+          expect(body.comments[0].created_at < body.comments[1].created_at).to.equal(true);
+          expect(body.comments[1].created_at < body.comments[2].created_at).to.equal(true);
+        }));
+      it('GET status:200 responce for sort_by Votes DEFAULT desc', () => request
+        .get('/api/articles/1/comments?sort_by=votes')
+        .expect(200)
+        .then(({ body }) => {
+          // console.log(body);
+          expect(body.comments[0].votes > body.comments[1].votes).to.equal(true);
+          expect(body.comments[1].votes > body.comments[2].votes).to.equal(true);
+        }));
+      it('GET status:200 responce for limit variation on DEFAULT page 1', () => request
+        .get('/api/articles/1/comments?limit=5')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comments).to.have.length(5);
+        }));
+      it('GET status:200 responce for pagination for DEFAULT limit ', () => request
+        .get('/api/articles/1/comments?p=2')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comments).to.have.length(3);
+        }));
+    });
   });
 });

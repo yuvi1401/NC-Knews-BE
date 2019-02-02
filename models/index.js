@@ -76,3 +76,16 @@ exports.patchVotes = (article_id, inc_votes) => connection('articles')
   .where('articles.article_id', '=', article_id)
   .increment('votes', inc_votes)
   .returning('*');
+
+exports.fetchCommentsByArticleId = (article_id, limit, sort_by, p, order) => connection('comments')
+  .select(
+    'comments.comment_id',
+    'comments.votes',
+    'comments.created_at',
+    'comments.username as author',
+    'comments.body',
+  )
+  .where(article_id)
+  .limit(limit)
+  .offset((p - 1) * limit)
+  .orderBy(sort_by, order);
