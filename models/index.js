@@ -93,3 +93,15 @@ exports.fetchCommentsByArticleId = (article_id, limit, sort_by, p, order) => con
 exports.addCommentByArticleId = newComment => connection('comments')
   .insert(newComment)
   .returning('*');
+
+exports.patchVotesComment = ({ inc_votes }, { article_id, comment_id }) => connection('comments')
+  .where('comments.comment_id', '=', comment_id)
+  .increment('votes', inc_votes)
+  .where('comments.article_id', '=', article_id)
+  .returning('*');
+
+exports.deleteComment = (article_id, comment_id) => connection('comments')
+  .where('comments.comment_id', '=', comment_id)
+  .del()
+  .where('comments.article_id', '=', article_id)
+  .returning('*');

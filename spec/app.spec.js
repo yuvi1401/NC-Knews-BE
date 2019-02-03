@@ -275,8 +275,7 @@ describe('/api', () => {
             expect(body.message).to.equal('Not found');
           });
       });
-      it('DELETE article by article id and send status 204', () => request.delete('/api/articles/1')
-        .expect(204));
+      it('DELETE article by article id and send status 204', () => request.delete('/api/articles/1').expect(204));
 
       it('PATCH should update the correct articles votes for given id', () => request
         .patch('/api/articles/1')
@@ -310,6 +309,14 @@ describe('/api', () => {
         .then(({ body }) => {
           // console.log(body);
           expect(body.votes).to.equal(99);
+        }));
+      it('PATCH Status 404 for invalid syntax', () => request
+        .patch('/api/articles/100')
+        .send({ inc_votes: 2 })
+        .expect(404)
+        .then(({ body }) => {
+          // console.log(body);
+          expect(body.message).to.equal('Not found');
         }));
     });
     describe('/:article_id/comments', () => {
@@ -412,9 +419,34 @@ describe('/api', () => {
         .send({ slug: 'bbc' })
         .expect(400)
         .then(({ body }) => {
-        // console.log(body);
+          // console.log(body);
           expect(body.message).to.eql('incorrect input post request cannot be processed');
         }));
+      it('PATCH should increament the votes for given comment id & +ve inc_votes', () => request
+        .patch('/api/articles/9/comments/1')
+        .send({ inc_votes: 5 })
+        .expect(200)
+        .then(({ body }) => {
+          // console.log(body);
+          expect(body.comment.votes).to.equal(21);
+        }));
+      it('PATCH should decreament the votes for given comment id & -ve inc_votes', () => request
+        .patch('/api/articles/9/comments/1')
+        .send({ inc_votes: -5 })
+        .expect(200)
+        .then(({ body }) => {
+          // console.log(body);
+          expect(body.comment.votes).to.equal(11);
+        }));
+      it('PATCH Status 404 for invalid syntax comment id & -ve inc_votes', () => request
+        .patch('/api/articles/400/comments/1')
+        .send({ inc_votes: 2 })
+        .expect(404)
+        .then(({ body }) => {
+          // console.log(body);
+          expect(body.message).to.equal('Not found');
+        }));
+      it('DELETE comment by comment id for given article id and send status 204', () => request.delete('/api/articles/1/comments/2').expect(204));
     });
   });
 });

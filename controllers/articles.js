@@ -5,6 +5,8 @@ const {
   patchVotes,
   fetchCommentsByArticleId,
   addCommentByArticleId,
+  patchVotesComment,
+  deleteComment,
 } = require('../models/index');
 
 exports.getArticles = (req, res, next) => {
@@ -85,6 +87,23 @@ exports.postCommentByArticleId = (req, res, next) => {
     .then(([comment]) => {
       // console.log(comment);
       res.status(201).send({ comment });
+    })
+    .catch(next);
+};
+exports.patchArticleComment = (req, res, next) => patchVotesComment(req.body, req.params)
+  .then(([comment]) => {
+    // console.log(comment);
+    if (!comment) next({ status: 404 });
+    else res.status(200).send({ comment });
+  })
+  .catch(next);
+
+exports.deleteCommentById = (req, res, next) => {
+  const { article_id } = req.params;
+  const { comment_id } = req.params;
+  deleteComment(article_id, comment_id)
+    .then((deleted) => {
+      res.status(204).send();
     })
     .catch(next);
 };
