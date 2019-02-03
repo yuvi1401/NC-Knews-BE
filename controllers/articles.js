@@ -4,6 +4,7 @@ const {
   deleteArticle,
   patchVotes,
   fetchCommentsByArticleId,
+  addCommentByArticleId,
 } = require('../models/index');
 
 exports.getArticles = (req, res, next) => {
@@ -72,6 +73,18 @@ exports.getCommentsByArticleId = (req, res, next) => {
     .then((comments) => {
       if (!comments) next({ status: 404 });
       else res.status(200).send({ comments });
+    })
+    .catch(next);
+};
+exports.postCommentByArticleId = (req, res, next) => {
+  const { body } = req;
+  // console.log(body);
+  body.article_id = req.params.article_id;
+  // console.log(body);
+  return addCommentByArticleId(body)
+    .then(([comment]) => {
+      // console.log(comment);
+      res.status(201).send({ comment });
     })
     .catch(next);
 };

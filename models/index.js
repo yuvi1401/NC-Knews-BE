@@ -89,3 +89,7 @@ exports.fetchCommentsByArticleId = (article_id, limit, sort_by, p, order) => con
   .limit(limit)
   .offset((p - 1) * limit)
   .orderBy(sort_by, order);
+
+exports.addCommentByArticleId = newComment => connection('comments')
+  .insert(newComment)
+  .returning('*');

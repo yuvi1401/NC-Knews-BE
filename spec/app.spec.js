@@ -13,7 +13,7 @@ describe('/api', () => {
 
   after(() => connection.destroy());
 
-  it('GET status error for wrong startpoint with errormessage', () => request
+  it('GET 404 status error for wrong startpoint with errormessage', () => request
     .get('/wrongstartpoint')
     .expect(404)
     .then(({ body }) => {
@@ -46,13 +46,21 @@ describe('/api', () => {
           expect(body.topic.description).to.equal(newTopic.description);
         });
     });
-    it('GET status:400 responds with error message for request with bad id', () => request
+    it('Post/topic status:400 responds with error message for incorrect input', () => request
       .post('/api/topics')
       .send({ username: 'bbc' })
       .expect(400)
       .then(({ body }) => {
         // console.log(body);
-        expect(body).to.haveOwnProperty('message');
+        expect(body.message).to.eql('incorrect input post request cannot be processed');
+      }));
+    it('Post/topic status:400 responds with error message for unique key', () => request
+      .post('/api/topics')
+      .send({ slug: 'cats', description: '' })
+      .expect(400)
+      .then(({ body }) => {
+        // console.log(body);
+        expect(body.message).to.eql('key value already exist');
       }));
   });
   describe('/:topic/articles', () => {
@@ -147,13 +155,25 @@ describe('/api', () => {
           expect(body.article.topic).to.equal('mitch');
         });
     });
-    it('GET status:400 responds with error message for request with bad id', () => request
+    it('POST/article status:400 responds with error message for incorrect input', () => request
       .post('/api/topics/mitch/articles')
       .send({ slug: 'bbc' })
       .expect(400)
       .then(({ body }) => {
         // console.log(body);
-        expect(body).to.haveOwnProperty('message');
+        expect(body.message).to.eql('incorrect input post request cannot be processed');
+      }));
+    it('POST/article status:400 responds for key doesnot exist', () => request
+      .post('/api/topics/mitch/articles')
+      .send({
+        username: 'rogersocat',
+        title: 'code',
+        body: 'under the dark world of spider web',
+      })
+      .expect(400)
+      .then(({ body }) => {
+        // console.log(body);
+        expect(body.message).to.eql('key is not present in the source table');
       }));
   });
 
@@ -237,13 +257,22 @@ describe('/api', () => {
             expect(body.article.body).to.equal('I find this existence challenging');
           });
       });
+      it('GET status 400 error response for invalid id syntax', () => {
+        request
+          .get('/api/articles/str')
+          .expect(400)
+          .then(({ body }) => {
+            // console.log(body);
+            expect(body.message).to.equal('Invalid input syntax');
+          });
+      });
       it('GET status 404 error response for incorrect id request', () => {
         request
-          .get('/api/articles/678')
+          .get('/api/articles/500')
           .expect(404)
           .then(({ body }) => {
             // console.log(body);
-            expect(body).to.haveOwnProperty('message');
+            expect(body.message).to.equal('Not found');
           });
       });
       it('DELETE article by article id and send status 204', () => request.delete('/api/articles/1')
@@ -338,6 +367,53 @@ describe('/api', () => {
         .expect(200)
         .then(({ body }) => {
           expect(body.comments).to.have.length(3);
+        }));
+      it('POST status: 201 respond for posted comment for given article_id', () => {
+        const newComment = {
+          username: 'icellusedkars',
+          body: 'Latest hourley forecast for weather today',
+        };
+        return request
+          .post('/api/articles/1/comments')
+          .send(newComment)
+          .expect(201)
+          .then(({ body }) => {
+            // console.log(body);
+            expect(body.comment).to.have.keys(
+              'username',
+              'body',
+              'votes',
+              'created_at',
+              'article_id',
+              'comment_id',
+            );
+            expect(body.comment.username).to.equal(newComment.username);
+            expect(body.comment.body).to.equal(newComment.body);
+            expect(body.comment.article_id).to.equal(1);
+            expect(body.comment.votes).to.equal(0);
+          });
+      });
+      it('POST/comment status:400 respond with error message for request with incorrect key data', () => {
+        const newComment = {
+          username: 'cricket',
+          body: '',
+        };
+        return request
+          .post('/api/articles/1/comments')
+          .send(newComment)
+          .expect(400)
+          .then(({ body }) => {
+            // console.log(body);
+            expect(body.message).to.eql('key is not present in the source table');
+          });
+      });
+      it('POST/comment status:400 respond with error message for request with bad input', () => request
+        .post('/api/articles/1/comments')
+        .send({ slug: 'bbc' })
+        .expect(400)
+        .then(({ body }) => {
+        // console.log(body);
+          expect(body.message).to.eql('incorrect input post request cannot be processed');
         }));
     });
   });
