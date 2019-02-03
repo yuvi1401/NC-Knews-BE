@@ -7,7 +7,7 @@ const {
   addCommentByArticleId,
   patchVotesComment,
   deleteComment,
-} = require('../models/index');
+} = require('../models/articles');
 
 exports.getArticles = (req, res, next) => {
   const {
@@ -25,7 +25,6 @@ exports.getArticleById = (req, res, next) => {
   const id = { 'articles.article_id': req.params.article_id };
   return fetchArticleById(id)
     .then(([article]) => {
-      // console.log(article);
       if (!article) next({ status: 404 });
       else res.status(200).send({ article });
     })
@@ -34,28 +33,18 @@ exports.getArticleById = (req, res, next) => {
 
 exports.deleteArticleById = (req, res, next) => {
   const { article_id } = req.params;
-  // console.log(article_id);
+
   deleteArticle(article_id)
     .then(deleteBlock => res.status(204).send())
     .catch(next);
-  // console.log(deletecount);
-  // if (!deletecount) next({ status: 404 });
-  // else res.status(204).send;
 };
 
 exports.patchVotesByArticleId = (req, res, next) => {
-  // console.log(req.body);
-  // console.log(req.params);
-
   const { inc_votes } = req.body;
   const { article_id } = req.params;
 
-  // console.log(inc_votes);
-  // console.log(article_id);
-
   return patchVotes(article_id, inc_votes)
     .then(([article]) => {
-      // console.log(article);
       if (!article) next({ status: 404 });
       else res.status(200).send(article);
     })
@@ -80,19 +69,17 @@ exports.getCommentsByArticleId = (req, res, next) => {
 };
 exports.postCommentByArticleId = (req, res, next) => {
   const { body } = req;
-  // console.log(body);
+
   body.article_id = req.params.article_id;
-  // console.log(body);
+
   return addCommentByArticleId(body)
     .then(([comment]) => {
-      // console.log(comment);
       res.status(201).send({ comment });
     })
     .catch(next);
 };
 exports.patchArticleComment = (req, res, next) => patchVotesComment(req.body, req.params)
   .then(([comment]) => {
-    // console.log(comment);
     if (!comment) next({ status: 404 });
     else res.status(200).send({ comment });
   })

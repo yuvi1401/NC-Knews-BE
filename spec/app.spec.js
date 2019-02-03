@@ -17,7 +17,6 @@ describe('/api', () => {
     .get('/wrongstartpoint')
     .expect(404)
     .then(({ body }) => {
-      // console.log(body);
       expect(body).to.haveOwnProperty('message');
     }));
 
@@ -26,7 +25,6 @@ describe('/api', () => {
       .get('/api/topics')
       .expect(200)
       .then(({ body }) => {
-        // console.log(body);
         expect(body.topics).to.be.an('array');
         expect(body.topics[0]).to.contains.keys('slug', 'description');
       }));
@@ -41,7 +39,6 @@ describe('/api', () => {
         .send(newTopic)
         .expect(201)
         .then(({ body }) => {
-          // console.log(body);
           expect(body.topic.slug).to.equal(newTopic.slug);
           expect(body.topic.description).to.equal(newTopic.description);
         });
@@ -51,7 +48,6 @@ describe('/api', () => {
       .send({ username: 'bbc' })
       .expect(400)
       .then(({ body }) => {
-        // console.log(body);
         expect(body.message).to.eql('incorrect input post request cannot be processed');
       }));
     it('Post/topic status:400 responds with error message for unique key', () => request
@@ -59,7 +55,6 @@ describe('/api', () => {
       .send({ slug: 'cats', description: '' })
       .expect(400)
       .then(({ body }) => {
-        // console.log(body);
         expect(body.message).to.eql('key value already exist');
       }));
   });
@@ -69,7 +64,6 @@ describe('/api', () => {
         .get('/api/topics/mitch/articles')
         .expect(200)
         .then(({ body }) => {
-          // console.log(body);
           expect(body.articles).to.be.an('array');
           expect(body.articles).to.have.length(10);
           expect(body.articles[0]).to.have.keys(
@@ -96,7 +90,6 @@ describe('/api', () => {
         .get('/api/topics/mitch/articles?limit=11&p=1')
         .expect(200)
         .then(({ body }) => {
-          // console.log(body);
           expect(body.articles).to.have.length(11);
         });
     });
@@ -105,7 +98,6 @@ describe('/api', () => {
         .get('/api/topics/mitch/articles?order=asc')
         .expect(200)
         .then(({ body }) => {
-          // console.log(body);
           expect(body.articles[0].title).to.equal('Moustache');
         });
     });
@@ -114,7 +106,6 @@ describe('/api', () => {
         .get('/api/topics/mitch/articles?sort_by=title')
         .expect(200)
         .then(({ body }) => {
-          // console.log(body);
           expect(body.articles[0].title).to.equal('Z');
         });
     });
@@ -123,7 +114,6 @@ describe('/api', () => {
         .get('/api/topics/barbara/articles')
         .expect(404)
         .then(({ body }) => {
-          // console.log(body);
           expect(body).to.haveOwnProperty('message');
         });
     });
@@ -139,7 +129,6 @@ describe('/api', () => {
         .send(newArticle)
         .expect(201)
         .then(({ body }) => {
-          // console.log(body);
           expect(body.article).to.have.keys(
             'username',
             'title',
@@ -160,7 +149,6 @@ describe('/api', () => {
       .send({ slug: 'bbc' })
       .expect(400)
       .then(({ body }) => {
-        // console.log(body);
         expect(body.message).to.eql('incorrect input post request cannot be processed');
       }));
     it('POST/article status:400 responds for key doesnot exist', () => request
@@ -172,7 +160,6 @@ describe('/api', () => {
       })
       .expect(400)
       .then(({ body }) => {
-        // console.log(body);
         expect(body.message).to.eql('key is not present in the source table');
       }));
   });
@@ -241,7 +228,6 @@ describe('/api', () => {
           .get('/api/articles/1')
           .expect(200)
           .then(({ body }) => {
-            // console.log(body);
             expect(body.article).to.have.keys(
               'article_id',
               'title',
@@ -262,7 +248,6 @@ describe('/api', () => {
           .get('/api/articles/str')
           .expect(400)
           .then(({ body }) => {
-            // console.log(body);
             expect(body.message).to.equal('Invalid input syntax');
           });
       });
@@ -271,7 +256,6 @@ describe('/api', () => {
           .get('/api/articles/500')
           .expect(404)
           .then(({ body }) => {
-            // console.log(body);
             expect(body.message).to.equal('Not found');
           });
       });
@@ -282,7 +266,6 @@ describe('/api', () => {
         .expect(200)
         .send({ inc_votes: 1 })
         .then(({ body }) => {
-          // console.log(body);
           expect(body.votes).to.equal(101);
         }));
 
@@ -291,7 +274,6 @@ describe('/api', () => {
         .expect(200)
         .send({ inc_votes: 4 })
         .then(({ body }) => {
-          // console.log(body);
           expect(body.votes).to.equal(4);
         }));
       it('PATCH should decreament articles by given votes for article id', () => request
@@ -299,7 +281,6 @@ describe('/api', () => {
         .expect(200)
         .send({ inc_votes: -1 })
         .then(({ body }) => {
-          // console.log(body);
           expect(body.votes).to.equal(-1);
         }));
       it('PATCH should decreament articles by given votes for article id', () => request
@@ -307,7 +288,6 @@ describe('/api', () => {
         .expect(200)
         .send({ inc_votes: -1 })
         .then(({ body }) => {
-          // console.log(body);
           expect(body.votes).to.equal(99);
         }));
       it('PATCH Status 404 for invalid syntax', () => request
@@ -315,7 +295,6 @@ describe('/api', () => {
         .send({ inc_votes: 2 })
         .expect(404)
         .then(({ body }) => {
-          // console.log(body);
           expect(body.message).to.equal('Not found');
         }));
     });
@@ -324,7 +303,6 @@ describe('/api', () => {
         .get('/api/articles/1/comments')
         .expect(200)
         .then(({ body }) => {
-          // console.log(body);
           expect(body.comments).to.be.an('array');
           expect(body.comments[0]).to.have.keys(
             'comment_id',
@@ -351,7 +329,6 @@ describe('/api', () => {
         .get('/api/articles/1/comments?order=asc')
         .expect(200)
         .then(({ body }) => {
-          // console.log(body);
           expect(body.comments[0].created_at < body.comments[1].created_at).to.equal(true);
           expect(body.comments[1].created_at < body.comments[2].created_at).to.equal(true);
         }));
@@ -359,7 +336,6 @@ describe('/api', () => {
         .get('/api/articles/1/comments?sort_by=votes')
         .expect(200)
         .then(({ body }) => {
-          // console.log(body);
           expect(body.comments[0].votes > body.comments[1].votes).to.equal(true);
           expect(body.comments[1].votes > body.comments[2].votes).to.equal(true);
         }));
@@ -385,7 +361,6 @@ describe('/api', () => {
           .send(newComment)
           .expect(201)
           .then(({ body }) => {
-            // console.log(body);
             expect(body.comment).to.have.keys(
               'username',
               'body',
@@ -410,7 +385,6 @@ describe('/api', () => {
           .send(newComment)
           .expect(400)
           .then(({ body }) => {
-            // console.log(body);
             expect(body.message).to.eql('key is not present in the source table');
           });
       });
@@ -419,7 +393,6 @@ describe('/api', () => {
         .send({ slug: 'bbc' })
         .expect(400)
         .then(({ body }) => {
-          // console.log(body);
           expect(body.message).to.eql('incorrect input post request cannot be processed');
         }));
       it('PATCH should increament the votes for given comment id & +ve inc_votes', () => request
@@ -427,7 +400,6 @@ describe('/api', () => {
         .send({ inc_votes: 5 })
         .expect(200)
         .then(({ body }) => {
-          // console.log(body);
           expect(body.comment.votes).to.equal(21);
         }));
       it('PATCH should decreament the votes for given comment id & -ve inc_votes', () => request
@@ -435,7 +407,6 @@ describe('/api', () => {
         .send({ inc_votes: -5 })
         .expect(200)
         .then(({ body }) => {
-          // console.log(body);
           expect(body.comment.votes).to.equal(11);
         }));
       it('PATCH Status 404 for invalid syntax comment id & -ve inc_votes', () => request
@@ -443,18 +414,16 @@ describe('/api', () => {
         .send({ inc_votes: 2 })
         .expect(404)
         .then(({ body }) => {
-          // console.log(body);
           expect(body.message).to.equal('Not found');
         }));
       it('DELETE comment by comment id for given article id and send status 204', () => request.delete('/api/articles/1/comments/2').expect(204));
     });
   });
-  describe.only('/users', () => {
+  describe('/users', () => {
     it('GET status: 200 responds with an array of users', () => request
       .get('/api/users')
       .expect(200)
       .then(({ body }) => {
-        // console.log(body);
         expect(body.users).to.be.an('array');
         expect(body.users[0]).to.contains.keys('username', 'avatar_url', 'name');
       }));
@@ -469,7 +438,6 @@ describe('/api', () => {
         .send(newUser)
         .expect(201)
         .then(({ body }) => {
-          // console.log(body);
           expect(body.user.username).to.equal(newUser.username);
           expect(body.user.name).to.equal(newUser.name);
           expect(body.user).to.eql(newUser);
@@ -480,7 +448,6 @@ describe('/api', () => {
       .send({ slug: 'bbc' })
       .expect(400)
       .then(({ body }) => {
-        // console.log(body);
         expect(body.message).to.eql('incorrect input post request cannot be processed');
       }));
     it('Post/topic status:400 responds with error message for unique key', () => request
@@ -488,7 +455,6 @@ describe('/api', () => {
       .send({ username: 'butter_bridge', avatar_url: '', name: '' })
       .expect(400)
       .then(({ body }) => {
-        // console.log(body);
         expect(body.message).to.eql('key value already exist');
       }));
   });

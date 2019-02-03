@@ -32,14 +32,14 @@
     "express": "^4.16.4",
     "knex": "^0.15.2",
     "mocha": "^5.2.0",
-    "nodemon": "^1.18.9",
-    "pg": "^7.8.0",
-    "supertest": "^3.4.2"
+    "pg": "^7.8.0"
   },
   "devDependencies": {
     "eslint": "^5.9.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.14.0",
-    "husky": "^1.1.4"
+    "husky": "^1.1.4",
+    "nodemon": "^1.18.9",
+    "supertest": "^3.4.2"
   }
 }

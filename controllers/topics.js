@@ -3,25 +3,13 @@ const {
   addTopic,
   fetchArticlesByTopic,
   addArticleByTopic,
-} = require('../models/index');
-
-// const connection = require('../db/connection');
+} = require('../models/topics');
 
 exports.getAllTopics = (req, res, next) => fetchTopics()
   .then((topics) => {
     res.status(200).send({ topics });
   })
   .catch(next);
-
-// exports.postTopic = (req, res, next) => {
-//   connection('topics')
-//     .insert(req.body)
-//     .returning('*')
-//     .then(([topic]) => {
-//       res.status(201).send({ topic });
-//     })
-//     .catch(next);
-// };
 
 exports.postTopic = (req, res, next) => {
   addTopic(req.body)
@@ -39,7 +27,7 @@ exports.getArticlesByTopic = (req, res, next) => {
   const sortOrder = ['username', 'title', 'votes', 'created_at', 'topic', 'count'];
   const sort_by_selection = sortOrder.includes(sort_by) ? sort_by : 'created_at';
   const orderSelection = order === 'asc' ? 'asc' : 'desc';
-  // console.log(sort_by_selection);
+
   return fetchArticlesByTopic(req.params, limit, sort_by_selection, p, orderSelection)
     .then((articles) => {
       if (articles.length === 0) next({ status: 404 });
