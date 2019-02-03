@@ -1,9 +1,13 @@
 const apiRouter = require('express').Router();
 
 const topicsRouter = require('../routes/topics');
-// const usersRouter = require('../routes/users');
+
 const articlesRouter = require('../routes/articles');
-// apiRouter.use('/users', usersRouter);
+
+const usersRouter = require('../routes/users');
+
 apiRouter.use('/topics', topicsRouter);
 apiRouter.use('/articles', articlesRouter);
+apiRouter.use('/users', usersRouter);
+
 module.exports = apiRouter;

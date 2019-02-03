@@ -1,7 +1,7 @@
 const connection = require('../db/connection');
 
 exports.fetchTopics = () => connection('topics').select('*');
-// exports.getAllusers = (username) => {return connection('users').select('*');}
+
 exports.addTopic = newTopic => connection('topics')
   .insert(newTopic)
   .returning('*');
@@ -104,4 +104,9 @@ exports.deleteComment = (article_id, comment_id) => connection('comments')
   .where('comments.comment_id', '=', comment_id)
   .del()
   .where('comments.article_id', '=', article_id)
+  .returning('*');
+
+exports.fetchAllUsers = () => connection('users').select('*');
+exports.addUser = newUser => connection('users')
+  .insert(newUser)
   .returning('*');

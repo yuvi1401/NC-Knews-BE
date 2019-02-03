@@ -449,4 +449,47 @@ describe('/api', () => {
       it('DELETE comment by comment id for given article id and send status 204', () => request.delete('/api/articles/1/comments/2').expect(204));
     });
   });
+  describe.only('/users', () => {
+    it('GET status: 200 responds with an array of users', () => request
+      .get('/api/users')
+      .expect(200)
+      .then(({ body }) => {
+        // console.log(body);
+        expect(body.users).to.be.an('array');
+        expect(body.users[0]).to.contains.keys('username', 'avatar_url', 'name');
+      }));
+    it('POST status: 201 responds users added to users table', () => {
+      const newUser = {
+        username: 'fun_centre',
+        avatar_url: 'https://wwww.funcentre.com/wp-content/try.jpg',
+        name: 'cobra',
+      };
+      return request
+        .post('/api/users')
+        .send(newUser)
+        .expect(201)
+        .then(({ body }) => {
+          // console.log(body);
+          expect(body.user.username).to.equal(newUser.username);
+          expect(body.user.name).to.equal(newUser.name);
+          expect(body.user).to.eql(newUser);
+        });
+    });
+    it('Post/topic status:400 responds with error message for incorrect input', () => request
+      .post('/api/users')
+      .send({ slug: 'bbc' })
+      .expect(400)
+      .then(({ body }) => {
+        // console.log(body);
+        expect(body.message).to.eql('incorrect input post request cannot be processed');
+      }));
+    it('Post/topic status:400 responds with error message for unique key', () => request
+      .post('/api/users')
+      .send({ username: 'butter_bridge', avatar_url: '', name: '' })
+      .expect(400)
+      .then(({ body }) => {
+        // console.log(body);
+        expect(body.message).to.eql('key value already exist');
+      }));
+  });
 });
