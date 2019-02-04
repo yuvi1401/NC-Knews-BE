@@ -5,6 +5,12 @@ const app = require('../app');
 const connection = require('../db/connection');
 
 const request = supertest(app);
+
+const test405 = (invalidMethods, path) => {
+  const invalidRequests = invalidMethods.map(method => request[method](path).expect(405));
+  return Promise.all(invalidRequests);
+};
+
 describe('/api', () => {
   beforeEach(() => connection.migrate
     .rollback()
@@ -21,6 +27,7 @@ describe('/api', () => {
     }));
 
   describe('/topics', () => {
+    const topicsUrl = '/api/topics';
     it('GET status: 200 responds with an array of topics', () => request
       .get('/api/topics')
       .expect(200)
@@ -57,6 +64,12 @@ describe('/api', () => {
       .then(({ body }) => {
         expect(body.message).to.eql('key value already exist');
       }));
+    it('Invalid request methods should return status 405', () => {
+      const invalidMethods = ['put', 'patch', 'delete'];
+      test405(invalidMethods, topicsUrl).then(([response]) => {
+        expect(response.statusCode).to.equal(405);
+      });
+    });
   });
   describe('/:topic/articles', () => {
     it('GET status 200 responds for array of articles for given topic', () => {
@@ -162,6 +175,12 @@ describe('/api', () => {
       .then(({ body }) => {
         expect(body.message).to.eql('key is not present in the source table');
       }));
+    it('Invalid request methods should return status 405', () => {
+      const invalidMethods = ['put', 'patch', 'delete'];
+      test405(invalidMethods, '/api/topics/mitch/articles').then(([response]) => {
+        expect(response.statusCode).to.equal(405);
+      });
+    });
   });
 
   describe('/api/articles', () => {
@@ -222,6 +241,7 @@ describe('/api', () => {
           expect(body.articles[0].article_id).to.equal(1);
         });
     });
+
     describe('/:article_id', () => {
       it('GET status 200 responds for given article_id', () => {
         request
@@ -260,7 +280,10 @@ describe('/api', () => {
           });
       });
       it('DELETE article by article id and send status 204', () => request.delete('/api/articles/1').expect(204));
-
+      it('Invalid request methods should return status 405', () => {
+        const invalidMethods = ['put', 'post'];
+        test405(invalidMethods, '/api/articles/1').then(([response]) => expect(response.statusCode).to.equal(405));
+      });
       it('PATCH should update the correct articles votes for given id', () => request
         .patch('/api/articles/1')
         .expect(200)
@@ -395,6 +418,11 @@ describe('/api', () => {
         .then(({ body }) => {
           expect(body.message).to.eql('incorrect input post request cannot be processed');
         }));
+      it('Invalid request methods should return status 405', () => {
+        const invalidMethods = ['put', 'patch', 'delete'];
+        test405(invalidMethods, '/api/articles/1/comments').then(([response]) => expect(response.statusCode).to.equal(405));
+      });
+
       it('PATCH should increament the votes for given comment id & +ve inc_votes', () => request
         .patch('/api/articles/9/comments/1')
         .send({ inc_votes: 5 })
@@ -457,5 +485,9 @@ describe('/api', () => {
       .then(({ body }) => {
         expect(body.message).to.eql('key value already exist');
       }));
+    it('Invalid request methods should return status 405', () => {
+      const invalidMethods = ['put', 'patch', 'delete'];
+      test405(invalidMethods, '/api/users');
+    });
   });
 });

@@ -7,11 +7,18 @@ const {
   postArticleByTopic,
 } = require('../controllers/topics');
 
-topicsRouter.get('/', getAllTopics);
+const { handle405 } = require('../error/index');
 
-topicsRouter.get('/:topic/articles', getArticlesByTopic);
-topicsRouter.post('/:topic/articles', postArticleByTopic);
+topicsRouter
+  .route('/')
+  .get(getAllTopics)
+  .post(postTopic)
+  .all(handle405);
 
-topicsRouter.post('/', postTopic);
+topicsRouter
+  .route('/:topic/articles')
+  .get(getArticlesByTopic)
+  .post(postArticleByTopic)
+  .all(handle405);
 
 module.exports = topicsRouter;

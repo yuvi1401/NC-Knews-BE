@@ -10,21 +10,27 @@ const {
   patchArticleComment,
   deleteCommentById,
 } = require('../controllers/articles');
+const { handle405 } = require('../error/index');
 
-articlesRouter.get('/', getArticles);
+articlesRouter.get('/', getArticles).all(handle405);
 
-articlesRouter.get('/:article_id', getArticleById);
+articlesRouter
+  .route('/:article_id')
+  .get(getArticleById)
+  .delete(deleteArticleById)
+  .patch(patchVotesByArticleId)
+  .all(handle405);
 
-articlesRouter.delete('/:article_id', deleteArticleById);
+articlesRouter
+  .route('/:article_id/comments')
+  .get(getCommentsByArticleId)
+  .post(postCommentByArticleId)
+  .all(handle405);
 
-articlesRouter.patch('/:article_id', patchVotesByArticleId);
-
-articlesRouter.get('/:article_id/comments', getCommentsByArticleId);
-
-articlesRouter.post('/:article_id/comments', postCommentByArticleId);
-
-articlesRouter.patch('/:article_id/comments/:comment_id', patchArticleComment);
-
-articlesRouter.delete('/:article_id/comments/:comment_id', deleteCommentById);
+articlesRouter
+  .route('/:article_id/comments/:comment_id')
+  .patch(patchArticleComment)
+  .delete(deleteCommentById)
+  .all(handle405);
 
 module.exports = articlesRouter;

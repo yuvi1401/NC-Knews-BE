@@ -20,6 +20,9 @@ exports.handle404 = (err, req, res, next) => {
   else next(err);
 };
 
+exports.handle405 = (req, res, next) => {
+  res.status(405).send({ message: 'invalid method for this endpoint' });
+};
 exports.handle500 = (err, req, res, next) => {
   console.log(err);
   res.status(500).send({ message: 'internal server error' });
