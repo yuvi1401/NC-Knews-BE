@@ -1,4 +1,5 @@
-Prerequisites
+## Prerequisites:
+
 Running this API locally will require PostgreSQL, Node, NPM and a terminal, to edit it you'll need a text-editor.
 
 Install Node.js by following the instructions on their website. This installation will include NPM.
@@ -10,27 +11,30 @@ Optional - Postman is software to send HTTP requests and is very useful for usin
 
 Here is a guide on getting started with postgres. You will only need to get yourself logged in and the psql server running to use this project. Minimum version 11.1 required - you can check your Postgres version by running psql --version in your terminal.
 
-Installation
+## Installation:
+
 Fork this repo
 Clone down to your local machine
 Open the project directory in your terminal and run 'npm install' to install the required dependencies
 Create a knexfile.js in the project root directory to allow knex to access your database., the contents of this should look like :
 const ENV = process.env.NODE_ENV || 'development';
 
+```js
 const baseConfig = {
-client: 'pg',
-migrations: {
-directory: './db/migrations',
-},
-seeds: {
-directory: './db/seeds',
-},
+  client: 'pg',
+  migrations: {
+    directory: './db/migrations'
+  },
+  seeds: {
+    directory: './db/seeds'
+  }
 };
 
 const customConfigs = {
-development: { connection: { database: 'nc_knews' } },
-test: { connection: { database: 'nc_knews_test' } },
+  development: { connection: { database: 'nc_knews' } },
+  test: { connection: { database: 'nc_knews_test' } }
 };
+```
 
 To create the database, we need to run psql -f ./db/dev-setup.sql, this will create an empty database for us to insert our data into.
 To add data to our new database, we will run npm run seed - this will run our migrations to create tables in the database, then insert the data in /db/data/development-data.
@@ -40,7 +44,9 @@ The server will then be available to send requests to and retrive data
 GET localhost:9090/api
 
 To run the tests, run npm test in your terminal - this will drop and re-create the database, run all migrations and re-seed the test database before runnin automated tests for all endpoints and methods/
-he tests
+The tests:
+
+```js
 describe('/articles', () => {
 it('GET request should return status 200 and respond with an array of article objects, each object having properties author, title, article_id, body, votes, comment_count, created_at and topic', () => request
 .get('/api/articles')
@@ -55,8 +61,11 @@ expect(body.articles[0]).to.have.all.keys(
 'created_at',
 'topic',
 );
+```
+
 The tests will make requests to each endpoint, with valid and invalid requests to make sure the api runs, sends the correct data or sends the correct error message for an invalid request.
 
+```js
 .expect(200)
 For a successful request, we're expecting the status code 200 - success
 
@@ -90,9 +99,12 @@ request
 expect(body).to.have.property('');
 })
 ));
+```
+
 This test makes multiple requests, expecting different status codes and results. To do this we chain the follow-up request in the .then() of the first request and return a second request. This is important to ensure the first request is functioning correctly, as the result is not directly testable from the first request's response.
 
-Deployment
+## Deployment:
+
 to host your own version you can follow these steps:
 
 Install the Heroku CLI
