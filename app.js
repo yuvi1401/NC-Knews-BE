@@ -1,10 +1,11 @@
 const app = require('express')();
 const bodyparser = require('body-parser');
+const CORS = require('cors');
 const apiRouter = require('./routes/api');
 const { handle400, handle404 } = require('./error');
 
 app.use(bodyparser.json());
-
+app.use(CORS());
 app.use('/api', apiRouter);
 app.use('/*', (req, res, next) => next({ status: 404, message: 'Route not found' }));
 // app.use((err, req, res, next) => {
