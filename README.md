@@ -1,3 +1,5 @@
+BE-NC-Knews
+
 ## Prerequisites:
 
 Running this API locally will require PostgreSQL, Node, NPM and a terminal, to edit it you'll need a text-editor.
@@ -67,12 +69,12 @@ The tests will make requests to each endpoint, with valid and invalid requests t
 
 ```js
 .expect(200)
-For a successful request, we're expecting the status code 200 - success
+For a successful request, we are expecting the status code 200 - success
 
 .then(({ body }) => {
 expect(body.article.article_id).to.equal(1);
 })
-Afterwards, we destructure the body of the request's response and check that it has the right properties
+Afterwards, we destructure the body of the request response and check that it has the right properties
 
 it('POST request should respond status code 404 if posted to an article ID that doesnt exist', () =>
 request
